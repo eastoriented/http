@@ -1,6 +1,27 @@
 {
+	"name": "eastoriented/http",
+	"description": "An east oriented HTTP client",
+	"type": "library",
+	"license": "BSD-2-Clause",
+	"minimum-stability": "dev",
+	"authors": [
+		{
+			"name": "Frédéric Hardy",
+			"email": "frederic.hardy@mageekbox.net"
+		}
+	],
     "require-dev": {
         "eastoriented/library": "dev-master",
         "atoum/atoum": "^3"
-    }
+    },
+	"autoload": {
+		"psr-4": {
+			"eastoriented\\http\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"eastoriented\\http\\tests\\units\\": "tests/units/src"
+		}
+	}
 }
