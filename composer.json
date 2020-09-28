@@ -1,0 +1,6 @@
+{
+    "require-dev": {
+        "eastoriented/library": "dev-master",
+        "atoum/atoum": "^3"
+    }
+}
