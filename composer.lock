@@ -4,21 +4,182 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "14f310105d58ac19f2d8eeb8ada9a772",
-    "packages": [],
-    "packages-dev": [
+    "content-hash": "ef2bfb8eb9280282233c70f9e3b04b9f",
+    "packages": [
         {
-            "name": "atoum/atoum",
-            "version": "3.4.2",
+            "name": "eastoriented/php-block",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/atoum/atoum.git",
-                "reference": "e90606b89e62c5c18c5d02596078edf55f35b3c3"
+                "url": "https://github.com/eastoriented/php-block.git",
+                "reference": "f5ca7fbfc4d233f4bd4eaf484cbfe5d2be6bd5f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atoum/atoum/zipball/e90606b89e62c5c18c5d02596078edf55f35b3c3",
-                "reference": "e90606b89e62c5c18c5d02596078edf55f35b3c3",
+                "url": "https://api.github.com/repos/eastoriented/php-block/zipball/f5ca7fbfc4d233f4bd4eaf484cbfe5d2be6bd5f6",
+                "reference": "f5ca7fbfc4d233f4bd4eaf484cbfe5d2be6bd5f6",
+                "shasum": ""
+            },
+            "require-dev": {
+                "atoum/atoum": "^3",
+                "eastoriented/library": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "eastoriented\\php\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Frédéric Hardy",
+                    "email": "frederic.hardy@mageekbox.net"
+                }
+            ],
+            "description": "A PHP library to emulate Smalltalk block",
+            "time": "2019-10-30T09:41:32+00:00"
+        },
+        {
+            "name": "eastoriented/php-container",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/eastoriented/php-container.git",
+                "reference": "fae7ce9c10f0df6107494b87cb373313faf8a80b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/eastoriented/php-container/zipball/fae7ce9c10f0df6107494b87cb373313faf8a80b",
+                "reference": "fae7ce9c10f0df6107494b87cb373313faf8a80b",
+                "shasum": ""
+            },
+            "require": {
+                "eastoriented/php-block": "dev-master"
+            },
+            "require-dev": {
+                "atoum/atoum": "^3",
+                "eastoriented/library": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "eastoriented\\php\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Frédéric Hardy",
+                    "email": "frederic.hardy@mageekbox.net"
+                }
+            ],
+            "description": "A PHP library to iterate over values in container",
+            "time": "2019-10-30T09:48:46+00:00"
+        },
+        {
+            "name": "eastoriented/php-string",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/eastoriented/php-string.git",
+                "reference": "09ac3f8364e20fc0d70cf61ce2c057264c24e3db"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/eastoriented/php-string/zipball/09ac3f8364e20fc0d70cf61ce2c057264c24e3db",
+                "reference": "09ac3f8364e20fc0d70cf61ce2c057264c24e3db",
+                "shasum": ""
+            },
+            "require": {
+                "eastoriented/php-block": "dev-master",
+                "eastoriented/php-container": "dev-master",
+                "eastoriented/php-test": "dev-master"
+            },
+            "require-dev": {
+                "atoum/atoum": "^3",
+                "eastoriented/library": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "eastoriented\\php\\string\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Frédéric Hardy",
+                    "email": "frederic.hardy@mageekbox.net"
+                }
+            ],
+            "description": "A PHP library to manage string",
+            "time": "2019-11-25T15:23:49+00:00"
+        },
+        {
+            "name": "eastoriented/php-test",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/eastoriented/php-test.git",
+                "reference": "8b7a0fc5da3904700cc260265306de430bb7d11d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/eastoriented/php-test/zipball/8b7a0fc5da3904700cc260265306de430bb7d11d",
+                "reference": "8b7a0fc5da3904700cc260265306de430bb7d11d",
+                "shasum": ""
+            },
+            "require": {
+                "eastoriented/php-block": "dev-master",
+                "eastoriented/php-container": "dev-master"
+            },
+            "require-dev": {
+                "atoum/atoum": "^3",
+                "eastoriented/library": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "eastoriented\\php\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Frédéric Hardy",
+                    "email": "frederic.hardy@mageekbox.net"
+                }
+            ],
+            "description": "A PHP library which define `if` as object",
+            "time": "2019-11-17T22:42:26+00:00"
+        }
+    ],
+    "packages-dev": [
+        {
+            "name": "atoum/atoum",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/atoum/atoum.git",
+                "reference": "7a5c8154fd816985c3ceb69741211e46ec52a0fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/atoum/atoum/zipball/7a5c8154fd816985c3ceb69741211e46ec52a0fc",
+                "reference": "7a5c8154fd816985c3ceb69741211e46ec52a0fc",
                 "shasum": ""
             },
             "require": {
@@ -88,7 +249,7 @@
                 "test",
                 "unit testing"
             ],
-            "time": "2020-03-04T10:29:09+00:00"
+            "time": "2020-09-29T08:34:12+00:00"
         },
         {
             "name": "eastoriented/library",
@@ -96,12 +257,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/eastoriented/library.git",
-                "reference": "204c99aa50aefac61140bd7416fee842c9d2ff08"
+                "reference": "6d688a8658b3b1b3150ecb41e7877074d9dc931c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eastoriented/library/zipball/204c99aa50aefac61140bd7416fee842c9d2ff08",
-                "reference": "204c99aa50aefac61140bd7416fee842c9d2ff08",
+                "url": "https://api.github.com/repos/eastoriented/library/zipball/6d688a8658b3b1b3150ecb41e7877074d9dc931c",
+                "reference": "6d688a8658b3b1b3150ecb41e7877074d9dc931c",
                 "shasum": ""
             },
             "bin": [
@@ -119,12 +280,15 @@
                 }
             ],
             "description": "A blueprint to setup a develoment environment for library with docker",
-            "time": "2020-07-29T10:04:06+00:00"
+            "time": "2020-10-12T10:26:47+00:00"
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
+        "eastoriented/php-string": 20,
+        "eastoriented/php-block": 20,
+        "eastoriented/php-container": 20,
         "eastoriented/library": 20
     },
     "prefer-stable": false,

@@ -1,6 +1,8 @@
 <?php namespace eastoriented\http;
 
-interface url
+use eastoriented\php;
+
+interface url extends php\string\provider
 {
 
 }

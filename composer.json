@@ -23,5 +23,10 @@
 		"psr-4": {
 			"eastoriented\\http\\tests\\units\\": "tests/units/src"
 		}
+	},
+	"require": {
+		"eastoriented/php-string": "dev-master",
+		"eastoriented/php-block": "dev-master",
+		"eastoriented/php-container": "dev-master"
 	}
 }

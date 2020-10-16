@@ -8,6 +8,6 @@ use eastoriented\http\{
 
 interface client
 {
-	function recipientOfHttpResponseForGetOnUrIs(url $url, response\recipient $recipient) :void;
+	function recipientOfHttpResponseForGetOnUrlIs(url $url, response\recipient $recipient) :void;
 	function recipientOfHttpResponseForRequestIs(request $request, response\recipient $recipient) :void;
 }
