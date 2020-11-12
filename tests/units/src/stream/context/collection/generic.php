@@ -27,7 +27,8 @@ class generic extends units\test
 			->given(
 				$this->newTestedInstance(
 					$iterator = new mockOfIterator,
-					$block = new mockOfIteratorBlock
+					$context = new mockOfStreamContext,
+					$otherContext = new mockOfStreamContext
 				),
 				$recipient = new mockOfStreamContextRecipient
 			)
@@ -36,29 +37,34 @@ class generic extends units\test
 			)
 			->then
 				->object($this->testedInstance)
-					->isEqualTo($this->newTestedInstance($iterator, $block))
-				->mock($iterator)
-					->receive('variablesForIteratorBlockAre')
-						->withArguments($block)
-							->once
+					->isEqualTo($this->newTestedInstance($iterator, $context, $otherContext))
+				->mock($context)
+					->receive('recipientOfArrayToBuildPhpHttpStreamContextIs')
+						->withArguments($recipient)
+							->never
+				->mock($otherContext)
+					->receive('recipientOfArrayToBuildPhpHttpStreamContextIs')
+						->withArguments($recipient)
+							->never
 
 			->given(
-				$this->newTestedInstance(
-					$iterator,
-					$block,
-					$streamContext = new mockOfStreamContext,
-					$otherStreamContext = new mockOfStreamContext
-				)
+				$this->calling($iterator)->variablesForIteratorBlockAre = function($aBlock, ... $variables) use ($iterator) {
+					foreach ($variables as $variable) $aBlock->containerIteratorHasValue($iterator, $variable);
+				}
 			)
 			->if(
 				$this->testedInstance->recipientOfArrayToBuildPhpHttpStreamContextIs($recipient)
 			)
 			->then
 				->object($this->testedInstance)
-					->isEqualTo($this->newTestedInstance($iterator, $block, $streamContext, $otherStreamContext))
-				->mock($iterator)
-					->receive('variablesForIteratorBlockAre')
-						->withArguments($block, $streamContext, $otherStreamContext)
+					->isEqualTo($this->newTestedInstance($iterator, $context, $otherContext))
+				->mock($context)
+					->receive('recipientOfArrayToBuildPhpHttpStreamContextIs')
+						->withArguments($recipient)
+							->once
+				->mock($otherContext)
+					->receive('recipientOfArrayToBuildPhpHttpStreamContextIs')
+						->withArguments($recipient)
 							->once
 		;
 	}

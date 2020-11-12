@@ -2,11 +2,11 @@
 
 use eastoriented\php\{
 	container\iterator,
-	container\iterator\block
 };
+use eastoriented\http\container\iterator\block;
 use eastoriented\http\stream\{
 	context,
-	context\php\recipient
+	context\php\recipient,
 };
 
 class generic
@@ -15,19 +15,22 @@ class generic
 {
 	private
 		$iterator,
-		$block,
 		$contexts
 	;
 
-	function __construct(iterator $iterator, block $block, context... $contexts)
+	function __construct(iterator $iterator, context... $contexts)
 	{
 		$this->iterator = $iterator;
-		$this->block = $block;
 		$this->contexts = $contexts;
 	}
 
 	function recipientOfArrayToBuildPhpHttpStreamContextIs(recipient $recipient): void
 	{
-		$this->iterator->variablesForIteratorBlockAre($this->block, ... $this->contexts);
+		$this->iterator
+			->variablesForIteratorBlockAre(
+			new block\recipient($recipient),
+				... $this->contexts
+			)
+		;
 	}
 }

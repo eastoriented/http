@@ -21,23 +21,13 @@ class fifo extends units\test
 	{
 		$this
 			->given(
-				$this->newTestedInstance,
-				$recipient = new mockOfStreamContextRecipient
-			)
-			->if(
-				$this->testedInstance->recipientOfArrayToBuildPhpHttpStreamContextIs($recipient)
-			)
-			->then
-				->object($this->testedInstance)
-					->isEqualTo($this->newTestedInstance)
-				->mock($recipient)
-					->receive('arrayToBuildPhpHttpStreamContextIs')
-						->never
-
-			->given(
 				$this->newTestedInstance(
 					$context = new mockOfStreamContext
-				)
+				),
+
+				$phpStreamContext = [],
+				$recipient = new mockOfStreamContextRecipient,
+				$this->calling($recipient)->arrayToBuildPhpHttpStreamContextIs = function($anArray) use (& $phpStreamContext) { $phpStreamContext[] = $anArray; }
 			)
 			->if(
 				$this->testedInstance->recipientOfArrayToBuildPhpHttpStreamContextIs($recipient)
@@ -45,13 +35,12 @@ class fifo extends units\test
 			->then
 				->object($this->testedInstance)
 					->isEqualTo($this->newTestedInstance($context))
-				->mock($recipient)
-					->receive('arrayToBuildPhpHttpStreamContextIs')
-						->never
+				->array($phpStreamContext)
+					->isEmpty
 
 			->given(
-				$phpStreamContext = [ 'method' => 'GET' ],
-				$this->calling($context)->recipientOfArrayToBuildPhpHttpStreamContextIs = fn($aRecipient) => $aRecipient->arrayToBuildPhpHttpStreamContextIs($phpStreamContext)
+				$arrayContext = [ uniqid() => uniqid() ],
+				$this->calling($context)->recipientOfArrayToBuildPhpHttpStreamContextIs = fn($aRecipient) => $aRecipient->arrayToBuildPhpHttpStreamContextIs($arrayContext)
 			)
 			->if(
 				$this->testedInstance->recipientOfArrayToBuildPhpHttpStreamContextIs($recipient)
@@ -59,16 +48,17 @@ class fifo extends units\test
 			->then
 				->object($this->testedInstance)
 					->isEqualTo($this->newTestedInstance($context))
-				->mock($recipient)
-					->receive('arrayToBuildPhpHttpStreamContextIs')
-						->withArguments($phpStreamContext)
-							->once
+				->array($phpStreamContext)
+					->isEqualTo([ $arrayContext ])
 
 			->given(
+				$phpStreamContext = [],
 				$this->newTestedInstance(
 					$context,
 					$otherContext = new mockOfStreamContext
-				)
+				),
+				$otherArrayContext = [ uniqid() => uniqid() ],
+				$this->calling($otherContext)->recipientOfArrayToBuildPhpHttpStreamContextIs = fn($aRecipient) => $aRecipient->arrayToBuildPhpHttpStreamContextIs($otherArrayContext)
 			)
 			->if(
 				$this->testedInstance->recipientOfArrayToBuildPhpHttpStreamContextIs($recipient)
@@ -76,64 +66,7 @@ class fifo extends units\test
 			->then
 				->object($this->testedInstance)
 					->isEqualTo($this->newTestedInstance($context, $otherContext))
-				->mock($recipient)
-					->receive('arrayToBuildPhpHttpStreamContextIs')
-						->withArguments($phpStreamContext)
-							->twice
-
-			->given(
-				$otherPhpStreamContext = $phpStreamContext,
-				$this->calling($otherContext)->recipientOfArrayToBuildPhpHttpStreamContextIs = fn($aRecipient) => $aRecipient->arrayToBuildPhpHttpStreamContextIs($otherPhpStreamContext)
-			)
-			->if(
-				$this->testedInstance->recipientOfArrayToBuildPhpHttpStreamContextIs($recipient)
-			)
-			->then
-				->object($this->testedInstance)
-					->isEqualTo($this->newTestedInstance($context, $otherContext))
-				->mock($recipient)
-					->receive('arrayToBuildPhpHttpStreamContextIs')
-						->withArguments($phpStreamContext)
-							->thrice
-
-			->given(
-				$otherPhpStreamContext = [ 'method' => 'POST' ],
-				$this->calling($otherContext)->recipientOfArrayToBuildPhpHttpStreamContextIs = fn($aRecipient) => $aRecipient->arrayToBuildPhpHttpStreamContextIs($otherPhpStreamContext)
-			)
-			->if(
-				$this->testedInstance->recipientOfArrayToBuildPhpHttpStreamContextIs($recipient)
-			)
-			->then
-				->object($this->testedInstance)
-					->isEqualTo($this->newTestedInstance($context, $otherContext))
-				->mock($recipient)
-					->receive('arrayToBuildPhpHttpStreamContextIs')
-						->withArguments($phpStreamContext)
-							->thrice
-						->withArguments($otherPhpStreamContext)
-							->once
-
-			->given(
-				$phpStreamContext = [ 'method' => 'GET', 'foo' => 'bar' ],
-				$this->calling($context)->recipientOfArrayToBuildPhpHttpStreamContextIs = fn($aRecipient) => $aRecipient->arrayToBuildPhpHttpStreamContextIs($phpStreamContext),
-				$otherPhpStreamContext = [ 'method' => 'POST', 'baz' => 'bar' ],
-				$this->calling($otherContext)->recipientOfArrayToBuildPhpHttpStreamContextIs = fn($aRecipient) => $aRecipient->arrayToBuildPhpHttpStreamContextIs($otherPhpStreamContext)
-			)
-			->if(
-				$this->testedInstance->recipientOfArrayToBuildPhpHttpStreamContextIs($recipient)
-			)
-			->then
-				->object($this->testedInstance)
-					->isEqualTo($this->newTestedInstance($context, $otherContext))
-				->mock($recipient)
-					->receive('arrayToBuildPhpHttpStreamContextIs')
-					->withArguments([
-							'method' => 'POST',
-							'foo' => 'bar',
-							'baz' => 'bar'
-						]
-					)
-							->once
+				->array($phpStreamContext)
 		;
 	}
 }
