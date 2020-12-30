@@ -1,7 +1,7 @@
 <?php
 
 use
-	atoum\reports
+	atoum\atoum\reports
 ;
 
 $runner
@@ -9,9 +9,7 @@ $runner
 	->disallowUsageOfUndefinedMethodInMock()
 ;
 
-$travis = getenv('TRAVIS');
-
-if ($travis)
+if (getenv('CI'))
 {
 	$script->addDefaultReport();
 
@@ -25,7 +23,7 @@ if ($travis)
 
 		$coverallsReport
 			->setBranchFinder(function() use ($defaultFinder) {
-					if (($branch = getenv('TRAVIS_BRANCH')) === false)
+					if (($branch = getenv('GITHUB_REF')) === false)
 					{
 						$branch = $defaultFinder();
 					}
@@ -33,8 +31,8 @@ if ($travis)
 					return $branch;
 				}
 			)
-			->setServiceName('travis-ci')
-			->setServiceJobId(getenv('TRAVIS_JOB_ID'))
+			->setServiceName('Github Action')
+			->setServiceJobId(getenv('GITHUB_RUN_NUMBER'))
 			->addDefaultWriter()
 		;
 
