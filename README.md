@@ -1,4 +1,4 @@
-# 
+# eastoriented/http ![Build Status](https://github.com/eastoriented/http/workflows/tests/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/eastoriented/http/badge.svg?branch=master)](https://coveralls.io/github/eastoriented/http?branch=master)
 
 
 
