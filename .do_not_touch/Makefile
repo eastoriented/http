@@ -5,6 +5,13 @@
 #
 # Have a good day!
 #
+#
+# Disable builtin rules and variables, because they are useless in our context and add lot of noise when `make -d` is used to debug the macfly.
+MAKEFLAGS+= --no-builtin-rules
+MAKEFLAGS+= --no-builtin-variables
+
+.DEFAULT_GOAL:=help
+
 ifeq "$(firstword $(MAKECMDGOALS))" "verbose"
 
 .PHONY: verbose
@@ -15,26 +22,26 @@ else
 
 include .do_not_touch/config.mk
 
-THIS_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-RESOURCES_DIR := $(THIS_DIR)/resources
-MKDIR=mkdir -p
-RM=rm -rf
+THIS_DIR:=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+THIS_MAKEFILE=$(firstword $(MAKEFILE_LIST))
+RESOURCES_DIR:=$(THIS_DIR)/resources
+MKDIR:=mkdir -p
+RM:=rm -rf
+MV:=mv -f
 DOCKER_COMPOSE:=$(shell which docker-compose || echo 'bin/docker-compose')
 CURRENT_VERSION:=$(shell git describe --tags --abbrev=0 2>/dev/null || echo 0.0.0)
-
-ifneq ($(WITH_DEBUG),)
-OLD_SHELL := $(SHELL)
-SHELL = $(warning $(if $@, Update target $@)$(if $<, from $<)$(if $?, due to $?))$(OLD_SHELL) -x
-endif
+INSTALLED_PHP_VERSION:=$(shell grep -e "^\s\+php-\([^:]\+\)" docker-compose.yml docker-compose.override.yml 2>/dev/null | cut -d: -f2 | cut -d- -f2 | sort | uniq || true)
 
 define locate
 $(or $(shell which $1),$(error \`$1\` is not in \`$(PATH)\`, please install it!))
 endef
 
-define binary
+define bin
+$(RM) $1
 $(call write,$1,'#!/usr/bin/env sh')
 $(call write,$1,'set -e')
-$(call write,$1,'exec $(DOCKER_COMPOSE) run --rm $2 $3 "$$@"')
+$(call write,$1,$4)
+$(call write,$1,'exec $(DOCKER_COMPOSE) run --rm $2 $3 "$$@" 2>/dev/null')
 chmod u+x $1
 endef
 
@@ -46,7 +53,20 @@ define write
 echo $2 >> $1
 endef
 
+define switch-php
+cat .env | grep -v PHP_VERSION | tee .env > /dev/null
+$(call write,.env,"PHP_VERSION=$1");
+echo "# DO NOT MODIFY THIS FILE, please put your specific docker-compose configuration in docker-compose.override.yml" > docker-compose.yml
+$(DOCKER_COMPOSE) -f .do_not_touch/docker-compose.yml $$(find .do_not_touch -type f -name "docker-compose.*.yml" -exec echo "-f {}" \; | xargs) config >> docker-compose.yml
+bin/composer install
+endef
+
+ifneq ($(WITH_DEBUG),)
+OLD_SHELL := $(SHELL)
+SHELL = $(warning $(if $@, Update target $@)$(if $<, from $<)$(if $?, due to $?))$(OLD_SHELL) -x
+else
 .SILENT:
+endif
 
 .SUFFIXES:
 
@@ -63,23 +83,23 @@ install: $(call locate,docker) bin/php bin/composer ## <Install> Install develop
 	$(call write,$@,"HOME=$(HOME)")
 	$(call write,$@,"USER_ID=$$(id -u):$$(id -g)")
 
-bin/php: | docker-compose.yml bin/. $(DOCKER_COMPOSE) ## <Install> Create wrapper for `php` using `docker`
-	$(call binary,$@,php-cli,php)
+bin/php: $(THIS_MAKEFILE) | docker-compose.yml bin/. $(DOCKER_COMPOSE) ## <Binaries> Create wrapper for `php` using `docker`
+	$(call bin,$@,php,php)
 
-bin/atoum: | docker-compose.yml bin/. .atoum.php vendor $(DOCKER_COMPOSE) ## <Install> Create wrapper for `atoum` using `docker`
-	$(call binary,$@,php-cli,/src/vendor/$@)
+bin/atoum: $(THIS_MAKEFILE) | docker-compose.yml bin/. .atoum.php vendor $(DOCKER_COMPOSE) ## <Binaries> Create wrapper for `atoum` using `docker`
+	$(call bin,$@,php,/src/vendor/$@)
 
-bin/composer: | docker-compose.yml bin/. .env $(DOCKER_COMPOSE) ## <Install> Create wrapper for `composer` using `docker`
-	$(call binary,$@,composer,composer)
+bin/composer: $(THIS_MAKEFILE) | docker-compose.yml bin/. .env $(DOCKER_COMPOSE) ## <Binaries> Create wrapper for `composer` using `docker`
+	$(call bin,$@,composer,composer,$(MKDIR) \$$HOME/.composer)
 
-bin/docker-compose: DOCKER_COMPOSE_VERSION=$(shell curl --silent "https://api.github.com/repos/docker/compose/releases/latest" | grep '"tag_name":' |  sed -E 's/.*"([^"]+)".*/\1/') ## <Install> Create wrapper for `docker-compose` using `docker`
-bin/docker-compose: | $(call locate,curl) bin/. .env docker-compose.yml ## Create wrapper for `docker-compose` using `docker`
+bin/docker-compose: DOCKER_COMPOSE_VERSION=$(shell curl --silent "https://api.github.com/repos/docker/compose/releases/latest" | grep '"tag_name":' |  sed -E 's/.*"([^"]+)".*/\1/')
+bin/docker-compose: | $(call locate,curl) bin/. .env docker-compose.yml  ## <Binaries> Create wrapper for `docker-compose` using `docker`
 	curl -L --fail https://github.com/docker/compose/releases/download/$(DOCKER_COMPOSE_VERSION)/run.sh -o $@
 	chmod u+x $@
 
-vendor: vendor/autoload.php  ## <Install> Create `vendor` directory
+vendor: vendor/autoload.php  ## <Install> Create or recreate `vendor` directory
 
-vendor/autoload.php: composer.lock | bin/composer
+vendor/autoload.php: composer.lock composer.json | bin/composer
 	bin/composer install
 
 vendor/update: | bin/composer ## <Update> Update `vendor` directory
@@ -87,7 +107,7 @@ vendor/update: | bin/composer ## <Update> Update `vendor` directory
 	./vendor/bin/eastoriented-library install
 
 .PHONY: autoload
-autoload: composer.json | bin/composer ## <Update> Generate autoload files
+autoload: composer.json composer.lock | bin/composer ## <Update> Generate autoload files
 	bin/composer dump-autoload
 
 .PHONY: tests/units
@@ -105,6 +125,29 @@ version/new/minor: | $(DOCKER_COMPOSE) ## <Versioning> Create tag for new minor 
 .PHONY: version/new/patch
 version/new/patch: | $(DOCKER_COMPOSE) ## <Versioning> Create tag for new patch version
 	$(call semver,patch)
+
+.PHONY: release
+release: releases/$(VERSION).tgz
+
+releases/$(VERSION).tgz: VERSION:=$(shell git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD)
+releases/$(VERSION).tgz: ./.git/HEAD | ./bin/composer ./releases. ## Create a tarball in `./releases` directory according to current tag or commit
+	$(RM) ./releases/tmp && $(MKDIR) ./releases/tmp
+	git archive --format=tar HEAD | tar -x -C ./releases/tmp
+	cd ./releases/tmp && tar czpf ../$(VERSION).tgz .
+	$(RM) ./tmp
+
+.PHONY: php/%
+php/%: | bin/composer ## <Environment> Switch PHP version, for example `make php/7.2`
+	@: $(if $(findstring $*,$(INSTALLED_PHP_VERSION)),,$(error PHP version $* is invalid, valid versions are $(INSTALLED_PHP_VERSION)))
+	$(call switch-php,$*)
+
+.PHONY: php/versions
+php/versions: ## <Environment> Display all available PHP versions
+	echo "Available PHP versions are $(INSTALLED_PHP_VERSION)"
+
+.PHONY: session
+session:
+	echo 'export PATH=$$(pwd)/bin:$$PATH'
 
 .PHONY: help
 help: ## <Help> Display this help.

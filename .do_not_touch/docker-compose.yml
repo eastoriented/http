@@ -1,0 +1,47 @@
+# DO NOT MODIFY THIS FILE, please put your specific docker-compose configuration in docker-compose.override.yml
+version: '2.4'
+
+services:
+   composer:
+      network_mode: bridge
+      image: composer:latest
+      user: ${USER_ID}
+      volumes:
+         - ..:/src
+         - ${HOME}/.composer:/.composer
+      working_dir: /src
+      environment:
+         - COMPOSER_CACHE_DIR=/.composer
+         - COMPOSER_ALLOW_SUPERUSER=1
+
+   semver:
+      network_mode: bridge
+      image: marcelocorreia/semver:latest
+      user: ${USER_ID}
+      volumes:
+         - ..:/src
+      working_dir: /src
+
+   php-7.1:
+      image: php:7.1
+
+   php-7.2:
+      image: php:7.2
+
+   php-7.3:
+      image: php:7.3
+
+   php-7.4:
+      image: php:7.4
+
+   php-8:
+      image: php:8
+
+   php:
+      extends:
+         service: php-${PHP_VERSION:-8}
+      network_mode: bridge
+      user: ${USER_ID}
+      volumes:
+         - ..:/src
+      working_dir: /src

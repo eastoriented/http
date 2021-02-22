@@ -1,5 +1,13 @@
+
+.atoum.php export-ignore
+.do_not_touch export-ignore
 .gitattributes export-ignore
+.github export-ignore
 .gitignore export-ignore
 .travis.yml export-ignore
-
+Makefile export-ignore
 VERSION export-subst
+composer.json export-ignore
+composer.lock export-ignore
+docker-compose.yml export-ignore
+tests export-ignore

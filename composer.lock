@@ -99,12 +99,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/eastoriented/php-string.git",
-                "reference": "ef9b802c15c3c5ac705e34c80e1446c07af155ad"
+                "reference": "b83f87b465b727b26ae907ed35b6827dd16ffe2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eastoriented/php-string/zipball/ef9b802c15c3c5ac705e34c80e1446c07af155ad",
-                "reference": "ef9b802c15c3c5ac705e34c80e1446c07af155ad",
+                "url": "https://api.github.com/repos/eastoriented/php-string/zipball/b83f87b465b727b26ae907ed35b6827dd16ffe2e",
+                "reference": "b83f87b465b727b26ae907ed35b6827dd16ffe2e",
                 "shasum": ""
             },
             "require": {
@@ -138,7 +138,7 @@
                 "issues": "https://github.com/eastoriented/php-string/issues",
                 "source": "https://github.com/eastoriented/php-string/tree/master"
             },
-            "time": "2020-12-30T14:12:06+00:00"
+            "time": "2021-01-04T15:43:44+00:00"
         },
         {
             "name": "eastoriented/php-test",
@@ -194,12 +194,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atoum/atoum.git",
-                "reference": "56e9c55cab42086c2eb6bd30fcf1e242f9c51f52"
+                "reference": "c4214d1b9a695d24a57cd1ffe874118c721b4b2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atoum/atoum/zipball/56e9c55cab42086c2eb6bd30fcf1e242f9c51f52",
-                "reference": "56e9c55cab42086c2eb6bd30fcf1e242f9c51f52",
+                "url": "https://api.github.com/repos/atoum/atoum/zipball/c4214d1b9a695d24a57cd1ffe874118c721b4b2f",
+                "reference": "c4214d1b9a695d24a57cd1ffe874118c721b4b2f",
                 "shasum": ""
             },
             "require": {
@@ -272,9 +272,9 @@
             ],
             "support": {
                 "issues": "https://github.com/atoum/atoum/issues",
-                "source": "https://github.com/atoum/atoum/tree/4.0.0"
+                "source": "https://github.com/atoum/atoum/tree/master"
             },
-            "time": "2020-11-21T17:23:11+00:00"
+            "time": "2021-01-14T18:13:00+00:00"
         },
         {
             "name": "eastoriented/library",
@@ -282,12 +282,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/eastoriented/library.git",
-                "reference": "110b64330219195e183395a1c3b04b86ef2a0167"
+                "reference": "daae4573c4ce569f7995da992ec7a4403aa0834e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eastoriented/library/zipball/110b64330219195e183395a1c3b04b86ef2a0167",
-                "reference": "110b64330219195e183395a1c3b04b86ef2a0167",
+                "url": "https://api.github.com/repos/eastoriented/library/zipball/daae4573c4ce569f7995da992ec7a4403aa0834e",
+                "reference": "daae4573c4ce569f7995da992ec7a4403aa0834e",
                 "shasum": ""
             },
             "default-branch": true,
@@ -310,7 +310,7 @@
                 "issues": "https://github.com/eastoriented/library/issues",
                 "source": "https://github.com/eastoriented/library/tree/master"
             },
-            "time": "2020-12-30T14:34:32+00:00"
+            "time": "2021-01-20T14:01:58+00:00"
         }
     ],
     "aliases": [],
