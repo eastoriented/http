@@ -18,6 +18,9 @@ ifeq "$(firstword $(MAKECMDGOALS))" "verbose"
 verbose: ## <Debug> Display all executed commands during targets building
 	$(MAKE) $(filter-out verbose,$(MAKECMDGOALS)) WITH_DEBUG=TRUE
 
+%:
+	true
+
 else
 
 include .do_not_touch/config.mk
@@ -46,7 +49,8 @@ chmod u+x $1
 endef
 
 define semver
-git tag $$($(DOCKER_COMPOSE) run --rm semver semver -c -i $1 $$(git describe --tags --abbrev=0 2>/dev/null || echo 0.0.0))
+semver=$$($(DOCKER_COMPOSE) run --rm semver semver -c -i $1 $$(git describe --tags --abbrev=0 2>/dev/null || echo 0.0.0)) && \
+git tag $$($$semver)
 endef
 
 define write
@@ -97,9 +101,7 @@ bin/docker-compose: | $(call locate,curl) bin/. .env docker-compose.yml  ## <Bin
 	curl -L --fail https://github.com/docker/compose/releases/download/$(DOCKER_COMPOSE_VERSION)/run.sh -o $@
 	chmod u+x $@
 
-vendor: vendor/autoload.php  ## <Install> Create or recreate `vendor` directory
-
-vendor/autoload.php: composer.lock composer.json | bin/composer
+vendor: composer.lock composer.json | bin/composer ## <Install> Create or recreate `vendor` directory
 	bin/composer install
 
 vendor/update: | bin/composer ## <Update> Update `vendor` directory
@@ -136,6 +138,10 @@ releases/$(VERSION).tgz: ./.git/HEAD | ./bin/composer ./releases. ## Create a ta
 	cd ./releases/tmp && tar czpf ../$(VERSION).tgz .
 	$(RM) ./tmp
 
+.PHONY: docker/pull
+docker/pull: $(DOCKER_COMPOSE)
+	$(DOCKER_COMPOSE) pull
+
 .PHONY: php/%
 php/%: | bin/composer ## <Environment> Switch PHP version, for example `make php/7.2`
 	@: $(if $(findstring $*,$(INSTALLED_PHP_VERSION)),,$(error PHP version $* is invalid, valid versions are $(INSTALLED_PHP_VERSION)))
@@ -151,7 +157,7 @@ session:
 
 .PHONY: help
 help: ## <Help> Display this help.
-	sed -e '/#\{2\} /!d; s/:[^#]*##/:/; s/\([^:]*\): <\([^>]*\)> \(.*\)/\2:\1:\3/; s/\([^:]*\): \([^<]*.*\)/Misc.:\1:\2/' $(MAKEFILE_LIST) | \
+	sed -e '/#\{2\} /!d; s/[?=:][^#]*##/:/; s/#\s*\([^#]\+\)##/\1:/; s/\([^:?]*\):\s<\([^>]*\)>\s\(.*\)/\2:\1:\3/; s/\([^:]*\):\s\([^<]*.*\)/Misc.:\1:\2/' $(MAKEFILE_LIST) | \
 	sort -t: -d | \
 	awk 'BEGIN{FS=":"; section=""} { if ($$1 != section) { section=$$1; printf "\n\033[1m%s\033[0m\n", $$1 } printf "\t\033[92m%s\033[0m:%s\n", $$2, $$3 }' | \
 	column -c2 -t -s :
